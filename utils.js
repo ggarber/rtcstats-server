@@ -86,7 +86,7 @@ function extractTracks(peerConnectionLog) {
                             tracks.get(key).stats.push(report);
                         }
                     } else if (trackIdentifier !== undefined) {
-                        console.log('NO ONTRACK FOR', trackIdentifier, report.ssrc);
+                        // console.log('NO ONTRACK FOR', key, trackIdentifier, report.ssrc);
                     }
                 }
             });

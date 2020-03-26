@@ -106,6 +106,17 @@ function setupWorkDirectory() {
     fs.mkdirSync(tempPath);
 }
 
+function getRequestAddress(request) {
+    const forwardedFor = request.headers['x-forwarded-for'];
+    if (forwardedFor) {
+        const tokens = forwardedFor.split(",");
+        return tokens[tokens.length - 1].trim();
+    } else {
+        const {remoteAddress} = request.connection;
+        return remoteAddress;
+    }
+}
+
 function run(keys) {
     setupWorkDirectory();
 
@@ -180,9 +191,7 @@ function run(keys) {
         };
         tempStream.write(JSON.stringify(meta) + '\n');
 
-        const forwardedFor = upgradeReq.headers['x-forwarded-for'];
-        const {remoteAddress} = upgradeReq.connection;
-        const address = forwardedFor || remoteAddress;
+        const address = getRequestAddress(upgradeReq);
         if (address) {
             process.nextTick(() => {
                 const city = cityLookup.get(address);
